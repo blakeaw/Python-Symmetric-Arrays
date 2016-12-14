@@ -37,7 +37,8 @@ Examples:
 """
 
 #imports
-#NumPy -- Copyright (c) 2005, NumPy Developers, http://www.numpy.org/
+#NumPy -- http://www.numpy.org/
+# used without modification. 
 import numpy as np
 
 # NxN symmetric array
