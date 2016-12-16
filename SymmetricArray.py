@@ -9,6 +9,14 @@ indexing functions allow interchangeable use of the symmetric indices during get
 the elements. 
 E.g. a SymmetricArray(10) object (representing a 10x10 symmetric array) 
 stores the (10**2 + 10)/2 = 55 unique values instead of the full 100.  
+
+I'm not sure if there may ever be a time when anyone would
+want to store custom objects in this type of symmetric array sturcture, but 
+there are also two helper functions which can be used
+to build lists of objects. These fucntions could be
+passed to the symmetric arrays in place of the numpy array builders to 
+store instances of custom objects.
+
  
 Examples:
     >>> import SymmetricArray as symarr
@@ -536,3 +544,62 @@ class SymmetricArray3d:
     
     def __str__(self):
         return "Representation of an "+str(self.N)+"x"+str(self.N)+"x"+str(self.N)+" array where array[i,j,k] = array[j,i,k] with "+str(self.unique)+" unique values."
+
+#a simple helper function for the SymmetricArray class
+def lister_1d(N, obj, init=False, *args, **kwargs): 
+    """ A 1 dimensional list of objects builder. 
+        
+        Args:
+            N (int): The length of the list containing the object obj to build.
+            obj (object instance, or object initialization function): the object to store or an initialization function
+                of the object to be stored.
+            init (bool): Default is False: Set to True if obj is object initializer.
+            args (optional): Additional arguments to be passed to obj when it is an initializer. 
+            kwargs (optional): Additional keyword arguments to be passed to obj when it is an initializer.
+        Returns:
+            out_list (list of obj typed objects): A list the input object (or object built by) obj of length N. 
+        Raises:
+            NONE 
+        Notes:
+            For use with SymmetricArray class when a custom object is being stored in the symmetric array.         
+
+    """
+    out_list = []
+    if init:
+        out_list = [ obj(*args, **kwargs) for i in range(N) ]
+    else:
+        out_list = [ obj for i in range(N) ]
+    return out_list
+
+#a simple helper function for the SymmetricArray3d class
+def lister_2d(NxM, obj, init=False, *args, **kwargs): 
+    """ A 2 dimensional list objects builder. 
+        
+        Args:
+            NxM (tuple of int): A length two tuple of the integer lengths of the outer and inner lists 
+                containing the object obj.
+            obj (object instance, or object initialization function): the object to store or an initialization function
+                of the object to be stored.
+            init (bool): Default is False: Set to True if obj is object initializer.
+            args (optional): Additional arguments to be passed to obj when it is an initializer. 
+            kwargs (optional): Additional keyword arguments to be passed to obj when it is an initializer.
+        Returns:
+            out_list (list of obj typed objects): A list the input object (or object built by) obj of length N. 
+        Raises:
+            NONE 
+        Notes:
+            For use with SymmetricArray3d class when a custom object is being stored in the symmetric array.         
+
+    """
+    out_list = []
+    N = NxM[0]
+    M = NxM[1]
+    if init:
+        for i in xrange(N):
+            inner_list = [ obj(*args, **kwargs) for j in range(M) ]
+            out_list.append(inner_list)
+    else:
+        for i in xrange(N):
+            inner_list = [ obj for j in range(M) ]
+            out_list.append(inner_list)
+    return out_list
